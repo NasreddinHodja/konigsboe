@@ -22,6 +22,7 @@ export function youtubeThumbnail(id: string): string {
 	return `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
 }
 
+
 export function formatDate(d: string): string {
 	return new Date(d + 'T00:00:00').toLocaleDateString('en-US', {
 		year: 'numeric',

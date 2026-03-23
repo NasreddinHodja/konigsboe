@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { formatDate, readingTime } from '$lib/utils';
+	import { formatDate } from '$lib/utils';
 	import { ArrowLeft } from '@lucide/svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -35,8 +35,7 @@
 				</a>
 				<div class="mt-3 flex items-center gap-3 text-xs text-fg-muted">
 					<time class="font-mono">{formatDate(post.metadata.date)}</time>
-					<span>·</span>
-					<span>{readingTime(post.html)} min read</span>
+	
 				</div>
 			</li>
 		{/each}
