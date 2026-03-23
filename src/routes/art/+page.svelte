@@ -23,7 +23,7 @@
 	{:else}
 		<ul class="border-t border-border">
 			{#each data.posts as post (post.slug)}
-				<li class="border-b border-border">
+				<li class="border-b border-border mt-6">
 					<a href="/art/{post.slug}" class="group block">
 						{#if post.metadata.cover}
 							{@const ytId = youtubeId(post.metadata.cover)}
@@ -31,7 +31,7 @@
 								<img
 									src={ytId ? youtubeThumbnail(ytId) : post.metadata.cover}
 									alt={post.metadata.title}
-									class="w-full aspect-video object-cover grayscale group-hover:grayscale-0 transition-[filter] duration-300"
+									class="w-full aspect-video object-cover transition-[filter] duration-300"
 								/>
 							</div>
 						{/if}
