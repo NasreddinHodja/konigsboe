@@ -60,7 +60,7 @@
 		<span class="text-fg">{data.post.metadata.title}</span>
 	</nav>
 
-	<header class="mb-12 border-b border-border pb-8">
+	<header class="mb-12 pb-8 {data.post.html?.trim() ? 'border-b border-border' : ''}">
 		<div class="mb-4 flex flex-wrap items-center gap-2 text-xs text-fg-muted">
 			<time class="font-mono">{formatDate(data.post.metadata.date)}</time>
 			{#each data.post.metadata.tags as tag}

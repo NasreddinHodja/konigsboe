@@ -57,7 +57,7 @@
 		<span class="text-fg">{data.post.metadata.title}</span>
 	</nav>
 
-	<header class="mb-12 border-b border-border pb-8">
+	<header class="mb-12 pb-8 {data.post.html?.trim() ? 'border-b border-border' : ''}">
 		{#if data.post.metadata.cover}
 			{@const ytId = youtubeId(data.post.metadata.cover)}
 			<div class="-mx-6 mb-8 overflow-hidden">
