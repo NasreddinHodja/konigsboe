@@ -8,7 +8,7 @@
 
 <svelte:head>
 	<title>Königsboe</title>
-	<meta name="description" content="A personal blog about software, systems, and ideas." />
+	<meta name="description" content="Nas' corner" />
 </svelte:head>
 
 <div class="mx-auto max-w-3xl px-6">
