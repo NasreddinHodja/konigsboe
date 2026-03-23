@@ -23,7 +23,6 @@
 			<div class="hidden items-center gap-6 md:flex">
 				<a href="/pandeiro" class="text-sm transition-opacity hover:opacity-70 text-fg-muted">Pandeiro</a>
 				<a href="/art" class="text-sm transition-opacity hover:opacity-70 text-fg-muted">Art</a>
-				<a href="/blog" class="text-sm transition-opacity hover:opacity-70 text-fg-muted">Writing</a>
 				<a href="/rss.xml" class="text-sm transition-opacity hover:opacity-70 text-fg-muted">RSS</a>
 			</div>
 
@@ -38,7 +37,6 @@
 						<Sheet.Title class="text-fg font-display font-bold">Königsboe</Sheet.Title>
 					</Sheet.Header>
 					<nav class="flex flex-col px-6 py-6 gap-6">
-						<a href="/blog" class="text-sm text-fg-muted hover:text-fg transition-colors">Writing</a>
 						<a href="/pandeiro" class="text-sm text-fg-muted hover:text-fg transition-colors">Pandeiro</a>
 						<a href="/art" class="text-sm text-fg-muted hover:text-fg transition-colors">Art</a>
 						<a href="/rss.xml" class="text-sm text-fg-muted hover:text-fg transition-colors">RSS</a>
