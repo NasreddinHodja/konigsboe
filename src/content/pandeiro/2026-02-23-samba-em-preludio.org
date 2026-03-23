@@ -1,0 +1,5 @@
+#+TITLE: Samba em Prelúdio
+#+DATE: 2026-02-23
+#+DESCRIPTION: Samba em Prelúdio - Paulinho Nogueira
+#+TAGS: practice video
+#+COVER: https://youtu.be/0lHtHXPOADU
