@@ -46,6 +46,9 @@
 	<meta property="og:title" content={data.post.metadata.title} />
 	<meta property="og:description" content={data.post.metadata.description} />
 	<meta property="og:type" content="article" />
+	{#if data.post.metadata.cover}
+		<meta property="og:image" content={data.post.metadata.cover} />
+	{/if}
 </svelte:head>
 
 <div class="mx-auto max-w-3xl px-6 py-16">
