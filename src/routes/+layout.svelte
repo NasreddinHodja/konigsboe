@@ -1,6 +1,6 @@
 <script lang="ts">
 	import './layout.css';
-	import favicon from '$lib/assets/favicon.svg';
+
 	import * as Sheet from '$lib/components/ui/sheet';
 	import { Menu } from '@lucide/svelte';
 
@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href="/favicon.png" type="image/png" />
 </svelte:head>
 
 <div class="flex min-h-screen flex-col bg-bg text-fg">
