@@ -56,7 +56,7 @@
 		<ChevronRight class="h-3 w-3" />
 		<a href="/art" class="text-fg-muted underline-offset-2 hover:underline">Art</a>
 		<ChevronRight class="h-3 w-3" />
-		<span class="text-fg">{data.post.metadata.title}</span>
+		<span class="truncate text-fg">{data.post.metadata.title}</span>
 	</nav>
 
 	<header class="mb-12 pb-8 {data.post.html?.trim() ? 'border-b border-border' : ''}">
@@ -107,7 +107,7 @@
 			{#if data.prev}
 				<a href="/art/{data.prev.slug}" class="group max-w-[45%] text-sm">
 					<span class="mb-1 flex items-center gap-1 font-mono text-xs text-fg-muted"><ArrowLeft class="h-3 w-3" /> Older</span>
-					<span class="font-display font-medium underline-offset-2 group-hover:underline">
+					<span class="truncate font-display font-medium underline-offset-2 group-hover:underline">
 						{data.prev.metadata.title}
 					</span>
 				</a>
@@ -117,7 +117,7 @@
 			{#if data.next}
 				<a href="/art/{data.next.slug}" class="group max-w-[45%] text-right text-sm">
 					<span class="mb-1 flex items-center justify-end gap-1 font-mono text-xs text-fg-muted">Newer <ArrowRight class="h-3 w-3" /></span>
-					<span class="font-display font-medium underline-offset-2 group-hover:underline">
+					<span class="truncate font-display font-medium underline-offset-2 group-hover:underline">
 						{data.next.metadata.title}
 					</span>
 				</a>

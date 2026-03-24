@@ -12,7 +12,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-3xl px-6">
-	<section class="flex flex-col items-center py-24 text-center">
+	<section class="flex flex-col items-center md:py-24 py-8 text-center">
 		<h1 class="mb-6 text-5xl font-bold leading-tight font-display">
 			Königsboe
 		</h1>
