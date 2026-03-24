@@ -1,6 +1,10 @@
 import { art } from '$lib/content';
 import { error } from '@sveltejs/kit';
 
+export function entries() {
+	return art.getAll().map((p) => ({ slug: p.slug }));
+}
+
 export function load({ params }: { params: { slug: string } }) {
 	const post = art.getBySlug(params.slug);
 	if (!post) throw error(404, 'Post not found');
