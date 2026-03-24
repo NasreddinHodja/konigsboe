@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>Art — Königsboe</title>
+	<title>Art | Königsboe</title>
 	<meta name="description" content="Art on Königsboe." />
 </svelte:head>
 

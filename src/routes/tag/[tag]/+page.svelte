@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>#{data.tag} — Königsboe</title>
+	<title>#{data.tag} | Königsboe</title>
 	<meta name="description" content="Posts tagged {data.tag} on Königsboe." />
 </svelte:head>
 

@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>{data.post.metadata.title} — Königsboe</title>
+	<title>{data.post.metadata.title} | Königsboe</title>
 	<meta name="description" content={data.post.metadata.description} />
 	<meta property="og:title" content={data.post.metadata.title} />
 	<meta property="og:description" content={data.post.metadata.description} />

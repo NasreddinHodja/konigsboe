@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>Pandeiro — Königsboe</title>
+	<title>Pandeiro | Königsboe</title>
 	<meta name="description" content="Pandeiro notes and writings on Königsboe." />
 </svelte:head>
 

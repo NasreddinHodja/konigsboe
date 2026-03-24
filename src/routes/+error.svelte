@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>{$page.status} — Königsboe</title>
+	<title>{$page.status} | Königsboe</title>
 </svelte:head>
 
 <div class="mx-auto max-w-3xl px-6 py-32 text-center">
