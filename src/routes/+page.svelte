@@ -55,8 +55,5 @@
 				</li>
 			{/each}
 		</ul>
-		<a href="/blog" class="mt-12 inline-flex items-center gap-1.5 border-b border-transparent pb-px text-sm font-medium text-accent hover:border-current">
-			All posts <ArrowRight class="h-3 w-3" />
-		</a>
 	</section>
 </div>

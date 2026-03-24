@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { formatDate } from '$lib/utils';
-	import { ArrowLeft } from '@lucide/svelte';
 
 	let { data }: { data: PageData } = $props();
 </script>
@@ -25,7 +24,7 @@
 	<ul class="border-t border-border">
 		{#each data.posts as post}
 			<li class="border-b border-border py-10">
-				<a href="/blog/{post.slug}" class="group block">
+				<a href="/{post.section}/{post.slug}" class="group block">
 					<h2 class="text-xl font-bold underline-offset-2 group-hover:underline font-display">
 						{post.metadata.title}
 					</h2>
@@ -35,13 +34,8 @@
 				</a>
 				<div class="mt-3 flex items-center gap-3 text-xs text-fg-muted">
 					<time class="font-mono">{formatDate(post.metadata.date)}</time>
-	
 				</div>
 			</li>
 		{/each}
 	</ul>
-
-	<a href="/blog" class="mt-12 inline-flex items-center gap-1.5 border-b border-transparent pb-px text-sm text-accent hover:border-current">
-		<ArrowLeft class="h-3 w-3" /> All posts
-	</a>
 </div>

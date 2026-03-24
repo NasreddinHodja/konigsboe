@@ -1,18 +1,16 @@
-import { getAllPosts, getAllTags } from '$lib/content';
+import { art, pandeiro } from '$lib/content';
 
 export const prerender = true;
 
 const SITE_URL = 'https://konigsboe.blog';
 
 export function GET() {
-	const posts = getAllPosts();
-	const tags = getAllTags();
-
 	const urls = [
 		SITE_URL + '/',
-		SITE_URL + '/blog',
-		...posts.map((p) => `${SITE_URL}/blog/${p.slug}`),
-		...tags.map((t) => `${SITE_URL}/tag/${t}`)
+		SITE_URL + '/art',
+		SITE_URL + '/pandeiro',
+		...art.getAll().map((p) => `${SITE_URL}/art/${p.slug}`),
+		...pandeiro.getAll().map((p) => `${SITE_URL}/pandeiro/${p.slug}`)
 	];
 
 	const xml = `<?xml version="1.0" encoding="UTF-8"?>
