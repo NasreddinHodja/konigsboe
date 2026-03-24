@@ -1,16 +1,10 @@
-import { art, pandeiro } from '$lib/content';
+import { getAllWithSections } from '$lib/content';
+import { SITE_URL, SITE_TITLE, SITE_DESC } from '$lib/config';
 
 export const prerender = true;
 
-const SITE_URL = 'https://konigsboe.blog';
-const SITE_TITLE = 'Königsboe';
-const SITE_DESC = "Nas' corner";
-
 export function GET() {
-	const posts = [
-		...art.getAll().map((p) => ({ ...p, section: 'art' })),
-		...pandeiro.getAll().map((p) => ({ ...p, section: 'pandeiro' }))
-	].sort((a, b) => b.metadata.date.localeCompare(a.metadata.date));
+	const posts = getAllWithSections();
 
 	const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">

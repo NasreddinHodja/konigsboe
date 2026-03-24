@@ -1,10 +1,3 @@
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs));
-}
-
 export function youtubeId(url: string): string | null {
 	// youtu.be/ID
 	let m = url.match(/youtu\.be\/([^?&]+)/);
@@ -22,11 +15,26 @@ export function youtubeThumbnail(id: string): string {
 	return `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
 }
 
-
 export function formatDate(d: string): string {
 	return new Date(d + 'T00:00:00').toLocaleDateString('en-US', {
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric'
 	});
+}
+
+export interface TocItem {
+	id: string;
+	text: string;
+	level: number;
+}
+
+export function extractToc(html: string): TocItem[] {
+	const items: TocItem[] = [];
+	const re = /<h([23])[^>]*\sid="([^"]+)"[^>]*>([\s\S]*?)<\/h[23]>/g;
+	let m: RegExpExecArray | null;
+	while ((m = re.exec(html)) !== null) {
+		items.push({ level: parseInt(m[1]), id: m[2], text: m[3].replace(/<[^>]*>/g, '') });
+	}
+	return items;
 }

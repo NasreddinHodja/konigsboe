@@ -12,20 +12,20 @@
 
 <div class="mx-auto max-w-3xl px-6 py-16">
 	<header class="mb-16">
-		<p class="mb-2 text-xs uppercase tracking-widest text-fg-muted font-mono">
-			Tag
-		</p>
-		<h1 class="text-4xl font-bold font-display">{data.tag}</h1>
+		<p class="mb-2 font-mono text-xs tracking-widest text-fg-muted uppercase">Tag</p>
+		<h1 class="font-display text-4xl font-bold">{data.tag}</h1>
 		<p class="mt-2 text-sm text-fg-muted">
 			{data.posts.length} post{data.posts.length === 1 ? '' : 's'}
 		</p>
 	</header>
 
 	<ul class="border-t border-border">
-		{#each data.posts as post}
+		{#each data.posts as post (post.section + post.slug)}
 			<li class="border-b border-border py-10">
 				<a href="/{post.section}/{post.slug}" class="group block">
-					<h2 class="truncate text-xl font-bold underline-offset-2 group-hover:underline font-display">
+					<h2
+						class="truncate font-display text-xl font-bold underline-offset-2 group-hover:underline"
+					>
 						{post.metadata.title}
 					</h2>
 					{#if post.metadata.description}

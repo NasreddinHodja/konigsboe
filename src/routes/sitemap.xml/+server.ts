@@ -1,16 +1,14 @@
-import { art, pandeiro } from '$lib/content';
+import { getAllWithSections } from '$lib/content';
+import { SITE_URL } from '$lib/config';
 
 export const prerender = true;
-
-const SITE_URL = 'https://konigsboe.blog';
 
 export function GET() {
 	const urls = [
 		SITE_URL + '/',
 		SITE_URL + '/art',
 		SITE_URL + '/pandeiro',
-		...art.getAll().map((p) => `${SITE_URL}/art/${p.slug}`),
-		...pandeiro.getAll().map((p) => `${SITE_URL}/pandeiro/${p.slug}`)
+		...getAllWithSections().map((p) => `${SITE_URL}/${p.section}/${p.slug}`)
 	];
 
 	const xml = `<?xml version="1.0" encoding="UTF-8"?>

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { formatDate, youtubeId, youtubeThumbnail } from '$lib/utils';
-	import { ArrowRight } from '@lucide/svelte';
 
 	let { data }: { data: PageData } = $props();
 </script>
@@ -12,30 +11,26 @@
 </svelte:head>
 
 <div class="mx-auto max-w-3xl px-6">
-	<section class="flex flex-col items-center md:py-24 py-8 text-center">
-		<h1 class="mb-6 text-5xl font-bold leading-tight font-display">
-			Königsboe
-		</h1>
-		<p class="text-xl text-fg-muted">
-			Nas' corner
-		</p>
-		<img src="/images/me_3.png" alt="Nas" class="mt-10 md:h-[500px] object-contain" />
+	<section class="flex flex-col items-center py-8 text-center md:py-24">
+		<h1 class="mb-6 font-display text-5xl leading-tight font-bold">Königsboe</h1>
+		<p class="text-xl text-fg-muted">Nas' corner</p>
+		<img src="/images/me_3.png" alt="Nas" class="mt-10 object-contain md:h-[500px]" />
 	</section>
 
 	<section class="py-16">
-		<h2 class="mb-10 text-xs uppercase tracking-widest text-fg-muted font-mono">
-			Recent
-		</h2>
+		<h2 class="mb-10 font-mono text-xs tracking-widest text-fg-muted uppercase">Recent</h2>
 		<ul class="border-t border-border">
 			{#each data.posts as post (post.slug + post.section)}
 				<li class="border-b border-border py-8">
 					<a href="/{post.section}/{post.slug}" class="group block">
-						<div class="flex items-center gap-2 text-xs text-fg-muted font-mono mb-2">
+						<div class="mb-2 flex items-center gap-2 font-mono text-xs text-fg-muted">
 							<time>{formatDate(post.metadata.date)}</time>
 							<span>·</span>
 							<span>{post.section}</span>
 						</div>
-						<h3 class="truncate text-xl font-bold underline-offset-2 group-hover:underline font-display">
+						<h3
+							class="truncate font-display text-xl font-bold underline-offset-2 group-hover:underline"
+						>
 							{post.metadata.title}
 						</h3>
 						{#if post.metadata.description}
@@ -47,7 +42,7 @@
 								<img
 									src={ytId ? youtubeThumbnail(ytId) : post.metadata.cover}
 									alt={post.metadata.title}
-									class="w-full aspect-video object-cover grayscale group-hover:grayscale-0 transition-[filter] duration-300"
+									class="aspect-video w-full object-cover grayscale transition-[filter] duration-300 group-hover:grayscale-0"
 								/>
 							</div>
 						{/if}
