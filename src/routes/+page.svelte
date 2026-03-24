@@ -35,7 +35,7 @@
 							<span>·</span>
 							<span>{post.section}</span>
 						</div>
-						<h3 class="text-xl font-bold underline-offset-2 group-hover:underline font-display">
+						<h3 class="truncate text-xl font-bold underline-offset-2 group-hover:underline font-display">
 							{post.metadata.title}
 						</h3>
 						{#if post.metadata.description}

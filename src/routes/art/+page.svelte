@@ -36,7 +36,7 @@
 							</div>
 						{/if}
 						<div class="py-8">
-							<h2 class="font-display text-xl font-bold underline-offset-2 group-hover:underline">
+							<h2 class="truncate font-display text-xl font-bold underline-offset-2 group-hover:underline">
 								{post.metadata.title}
 							</h2>
 							{#if post.metadata.description}

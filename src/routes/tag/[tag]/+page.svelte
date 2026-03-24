@@ -25,7 +25,7 @@
 		{#each data.posts as post}
 			<li class="border-b border-border py-10">
 				<a href="/{post.section}/{post.slug}" class="group block">
-					<h2 class="text-xl font-bold underline-offset-2 group-hover:underline font-display">
+					<h2 class="truncate text-xl font-bold underline-offset-2 group-hover:underline font-display">
 						{post.metadata.title}
 					</h2>
 					{#if post.metadata.description}
