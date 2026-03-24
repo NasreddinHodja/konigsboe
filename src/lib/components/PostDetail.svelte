@@ -84,7 +84,7 @@
 				</a>
 			{/each}
 		</div>
-		<h1 class="font-display text-4xl leading-tight font-bold">
+		<h1 class="font-display text-4xl leading-tight font-bold break-words">
 			{post.metadata.title}
 		</h1>
 		{#if post.metadata.description}
@@ -117,7 +117,7 @@
 					<span class="mb-1 flex items-center gap-1 font-mono text-xs text-fg-muted"
 						><ArrowLeft class="h-3 w-3" /> Older</span
 					>
-					<span class="truncate font-display font-medium underline-offset-2 group-hover:underline">
+					<span class="block truncate font-display font-medium underline-offset-2 group-hover:underline">
 						{prev.metadata.title}
 					</span>
 				</a>
@@ -129,7 +129,7 @@
 					<span class="mb-1 flex items-center justify-end gap-1 font-mono text-xs text-fg-muted"
 						>Newer <ArrowRight class="h-3 w-3" /></span
 					>
-					<span class="truncate font-display font-medium underline-offset-2 group-hover:underline">
+					<span class="block truncate font-display font-medium underline-offset-2 group-hover:underline">
 						{next.metadata.title}
 					</span>
 				</a>
