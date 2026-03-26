@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import PostList from '$lib/components/PostList.svelte';
+	import { SITE_URL } from '$lib/config';
 
 	let { data }: { data: PageData } = $props();
 </script>
@@ -8,6 +9,7 @@
 <svelte:head>
 	<title>Writing | Königsboe</title>
 	<meta name="description" content="Writing on Königsboe." />
+	<meta property="og:image" content="{SITE_URL}/images/og-cover.jpg" />
 </svelte:head>
 
 <div class="mx-auto max-w-3xl px-6 py-16">

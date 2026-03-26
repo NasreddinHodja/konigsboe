@@ -108,7 +108,7 @@
 		</nav>
 	{/if}
 
-	<article class="prose max-w-none prose-stone dark:prose-invert prose-h1:text-2xl prose-h1:leading-8 prose-h1:mt-10 prose-h1:mb-2 prose-h2:mt-8 prose-h2:mb-2 prose-h3:mt-6 prose-h3:mb-1 prose-li:my-0.5" data-pagefind-body>
+	<article class="prose max-w-none prose-stone dark:prose-invert prose-h1:text-4xl prose-h1:leading-tight prose-h1:mt-12 prose-h1:mb-3 prose-h2:mt-8 prose-h2:mb-2 prose-h3:mt-6 prose-h3:mb-1 prose-li:my-0.5" data-pagefind-body>
 		{#each post.segments as seg}
 			{#if seg.type === 'html'}
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->

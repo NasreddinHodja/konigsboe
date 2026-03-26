@@ -43,7 +43,7 @@ Lea said we need to *find a path* that:
 
 Alright. Sounds pretty dumb.
 
-Lets do this.
+Let's do this. (You should try it too. Do you even want to help?)
 
 #+id: 2
 #+caption: This drawing makes my eyes hurt
@@ -75,7 +75,7 @@ I can still draw my paths, though. Don't trust me? try it out!
 
 ...so I guess this works?
 
-By the way, when I talk with Aunt Lea about this, I describe my paths like this:
+By the way, when I talk to Aunt Lea about this, I describe my paths like this:
 
 #+id: 6
 #+begin_equation
@@ -89,17 +89,17 @@ I don't know, friend... *Is this even possible?*
 
 Everytime I try, I end up stuck somewhere with one or more brigdes left.
 
-In the [[fig:6][previous path]], we got stuck in C because all its bridges were already used. But there was still one bridge left, which was unfortunatelly not connected to C.
+In the [[fig:6][previous path]] we got stuck in C because all its bridges were already used. But there was still one bridge left, which was unfortunatelly not connected to C.
 
 I DON'T FUCKING KNOW LEAVE ME ALONE
 
-* Lets chill
+* Let's chill
 It FEELS like the problem is unsolvable. But WHY? Why do I keep getting stuck?
 
 How do I even start thinking about this?
 
 * I don't know
-I give up. Lets just look at an individual land and its brigdes.
+I give up. Let's just look at an individual land and its brigdes.
 
 ** Example 1
 Here, take this path:
@@ -107,7 +107,7 @@ Here, take this path:
 #+caption: R -> C -> H -> L -> C -> H
 #+image: /images/blog/about-the-bridges/ex-01.png
 
-Lets forget the rest of the lands and only look at H because thats the land that we managed to cross all bridges. Maybe we can find out why we managed to do it for H and not the rest?
+Let's forget the rest of the lands and only look at H because thats the land whose bridges we managed to cross. Maybe we can find out why we could do it for H and not the rest?
 
 We notice a few things:
 1. H has 3 bridges
@@ -124,7 +124,7 @@ If H has 3 bridges, and the path started outside H, and we need to use all 3 bri
 
 1. one brigde will be used to enter H
 2. a second one will be used to exit H
-3. and the third one will be used (we must use all bridge), *ending the path in H*
+3. and the third one will be used (we must use all bridges), *ending the path in H*
 
 DO YOU UNDERSTAND? WE HAVE SOMETHING HERE!!!!!!
 
@@ -140,7 +140,7 @@ c) startig outside,
 THEN the path will end inside!
 
 ** Example 2
-Alright lets look at this:
+Alright let's look at this:
 
 #+id: 9
 #+caption: H -> L -> C -> H -> C -> R -> L
@@ -151,6 +151,8 @@ Looking at H we have something like this:
 #+id: 10
 #+caption: H -> ... -> H -> ...
 #+image: /images/blog/about-the-bridges/h-02.png
+
+This is basically the "reverse" of the last example.
 
 Again, we notice a few things:
 1. H has 3 bridges
@@ -166,7 +168,7 @@ a) if a land has 3 brigdes,
 b) and we want to use all of them,
 c) we have 2 options:
    - if starting outside, [[#conjecture-1][THEN the path will end inside!]]
-   - if startig inside, [[fig:10][THEN the path will end outside]]
+   - if startig inside, [[fig:10][THEN the path will end outside!]]
 
 *** Conjecture 2 - reworded
 :PROPERTIES:
@@ -176,7 +178,7 @@ c) we have 2 options:
 In other words:
 a) if a land has 3 bridges
 b) and we have a path that crosses all bridges once
-c) *then this land will have to be either at the start or at the begining of the path* (and we will also pass by it somewhere along the path)
+c) *then this land will have to be either at the start or at the end of the path*
 
 * We have something already
 Supose such path is possible for our city and we found it.
@@ -196,10 +198,13 @@ I was eager to share my findings with her but it seems she is on her monthly pil
 
 A few questions still encacucate me, though:
 
-1. is this impossible for ALL possible land+bridge configurations? What if we had lands with 2 bridges, or 4? or 6? idunno
-2. if not, what do we need for a path like this to be possible?
+1. Is this impossible for ALL possible land+bridge configurations? What if we had lands with 2 bridges, or 4? or 6? idunno
+2. If not, what do we need for a path like this to be possible?
+3. Is 3 a cursed number?
+   - I FEEL like the examples we saw would end up with the same result if there was was any odd (3+) number of bridges... I guess we'll have to look into that next.
+4. are we still talking about lands and bridges?
 
-Stay tuned for more! haha bye friends
+Stay tuned for more! haha bye friend
 
 # ** Example 3
 # Don't give up. We are getting somewhere. YOU HAVE TO TRUST ME.
@@ -236,4 +241,4 @@ Stay tuned for more! haha bye friends
 # b) took 1 bridge in, 1 out, one last in
 
 # ** Example 4
-# Lets pretend we have another
+# Letsi pretend we have another

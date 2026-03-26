@@ -6,7 +6,6 @@
 
 <svelte:head>
 	<link rel="icon" href="/favicon.png" type="image/png" />
-	<meta property="og:image" content="/images/og-cover.jpg" />
 </svelte:head>
 
 <div class="flex min-h-screen flex-col bg-bg text-fg">

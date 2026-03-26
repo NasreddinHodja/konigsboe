@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import PostDetail from '$lib/components/PostDetail.svelte';
+	import { SITE_URL } from '$lib/config';
 
 	let { data }: { data: PageData } = $props();
 </script>
@@ -12,7 +13,7 @@
 	<meta property="og:description" content={data.post.metadata.description} />
 	<meta property="og:type" content="article" />
 	{#if data.post.metadata.cover}
-		<meta property="og:image" content={data.post.metadata.cover} />
+		<meta property="og:image" content="{SITE_URL}{data.post.metadata.cover}" />
 	{/if}
 </svelte:head>
 
