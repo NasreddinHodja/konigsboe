@@ -2,6 +2,8 @@ const blogModules = import.meta.glob('/src/content/blog/*.org', { eager: true })
 const pandeiroModules = import.meta.glob('/src/content/pandeiro/*.org', { eager: true });
 const artModules = import.meta.glob('/src/content/art/*.org', { eager: true });
 
+import type { Segment } from './types';
+
 export interface PostMetadata {
 	title: string;
 	date: string;
@@ -14,6 +16,7 @@ export interface PostMetadata {
 export interface Post {
 	slug: string;
 	html: string;
+	segments: Segment[];
 	metadata: PostMetadata;
 }
 
@@ -28,12 +31,12 @@ function makeSection(modules: Record<string, unknown>) {
 		return Object.entries(modules)
 			.map(([path, mod]) => {
 				const slug = path.split('/').pop()!.replace('.org', '');
-				const m = mod as { html: string; metadata: PostMetadata & { tags: string | string[] } };
+				const m = mod as { html: string; segments: Segment[]; metadata: PostMetadata & { tags: string | string[] } };
 				const tags =
 					typeof m.metadata.tags === 'string'
 						? m.metadata.tags.split(/\s+/).filter(Boolean)
 						: (m.metadata.tags ?? []);
-				return { slug, html: m.html, metadata: { ...m.metadata, tags } };
+				return { slug, html: m.html, segments: m.segments ?? [], metadata: { ...m.metadata, tags } };
 			})
 			.filter((p) => !p.metadata.draft || import.meta.env.DEV)
 			.sort((a, b) => b.metadata.date.localeCompare(a.metadata.date));

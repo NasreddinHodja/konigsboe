@@ -1,0 +1,238 @@
+#+TITLE: About the Bridges
+#+DATE: 2026-03-25
+#+DESCRIPTION: A Königsclassic.
+#+TAGS: Graphs
+
+* Motivation
+In my city there is this messy river that forks, creating a few islands that we tied together with bridges. If we didn't do that, the islands would float downstream. Right??
+
+It looks like this:
+
+#+id: 1
+#+caption: The seven bridges of Königsberg
+#+figure: /images/blog/about-the-bridges/konigsberg-001.jpg
+
+Aunt Lea came to me the other day with [[fig:1][this]] ugly drawing and a silly problem:
+
+#+author: Aunt Lea
+#+begin_quote
+It's been 18 days since I last slept. I can't take this anymore. Nassu, I need to find out if there is a way I can make a *path that crosses ALL the brigdes exactly ONCE!!!1*
+#+end_quote
+
+Aunt Lea gets a little obsessive sometimes haha.
+
+#+author: Nassu
+#+begin_quote
+Aunt Lea you can't stop taking your medication. You know this goes bad for you.
+#+end_quote
+
+She didn't like that.
+
+#+author: Aunt Lea
+#+begin_quote
+I will burn your house down you piece of shit good for nothing. YOU KILLED MY SISTER
+#+end_quote
+
+Then she started pulling her nails out with her teeth so now we have to help Aunt Lea :/
+
+* The problem
+Lea said we need to *find a path* that:
+1. crosses *ALL* brigdes
+2. does *NOT REPEAT* bridges
+
+Alright. Sounds pretty dumb.
+
+Lets do this.
+
+#+id: 2
+#+caption: This drawing makes my eyes hurt
+#+video: /images/blog/about-the-bridges/1st-try.webm
+
+I don't know about you, but the details in her drawing are making me feel dizzy.
+
+We dont need to know how the land looks. We just need to know that there is land there and that there are these brigdes connecting them.
+
+#+id: 3
+#+caption: WOW! This is MUCH better
+#+image: /images/blog/about-the-bridges/simplified.svg
+
+I added names to each land and I'm going to refer to them using the 1st letter of their name. You are a very capable person. Do not cower, friend.
+
+/BANG!/ Aunt Lea hit me in the head and I momentarily lost spacial awareness.
+
+I looked my [[fig:3][drawing]] and this is what I could see:
+
+#+id: 4
+#+caption: I don't understand shapes and spacial configuration
+#+image: /images/blog/about-the-bridges/simplified-2.png
+
+I can still draw my paths, though. Don't trust me? try it out!
+
+#+id: 5
+#+caption: You should trust me more
+#+video: /images/blog/about-the-bridges/abstract-shit.webm
+
+...so I guess this works?
+
+By the way, when I talk with Aunt Lea about this, I describe my paths like this:
+
+#+id: 6
+#+begin_equation
+R \to C \to R \to L \to C \to H \to C
+#+end_equation
+
+If you are paying attention (FOCUS!!), you will see that this [[fig:6][path]] represents the one in the [[fig:5][video]].
+
+* The problem: reloaded
+I don't know, friend... *Is this even possible?*
+
+Everytime I try, I end up stuck somewhere with one or more brigdes left.
+
+In the [[fig:6][previous path]], we got stuck in C because all its bridges were already used. But there was still one bridge left, which was unfortunatelly not connected to C.
+
+I DON'T FUCKING KNOW LEAVE ME ALONE
+
+* Lets chill
+It FEELS like the problem is unsolvable. But WHY? Why do I keep getting stuck?
+
+How do I even start thinking about this?
+
+* I don't know
+I give up. Lets just look at an individual land and its brigdes.
+
+** Example 1
+Here, take this path:
+#+id: 7
+#+caption: R -> C -> H -> L -> C -> H
+#+image: /images/blog/about-the-bridges/ex-01.png
+
+Lets forget the rest of the lands and only look at H because thats the land that we managed to cross all bridges. Maybe we can find out why we managed to do it for H and not the rest?
+
+We notice a few things:
+1. H has 3 bridges
+2. all of H's bridges were used! yay!
+3. path started outside H and ended inside H (stuck)
+
+I mean... it makes sense...
+
+If H has 3 bridges, and the path started outside H, and we need to use all 3 brigdes once... then what happens is:
+
+#+id: 8
+#+caption: ... -> H -> ... -> H
+#+image: /images/blog/about-the-bridges/h-01.png
+
+1. one brigde will be used to enter H
+2. a second one will be used to exit H
+3. and the third one will be used (we must use all bridge), *ending the path in H*
+
+DO YOU UNDERSTAND? WE HAVE SOMETHING HERE!!!!!!
+
+*** Conjecture 1
+:PROPERTIES:
+:CUSTOM_ID: conjecture-1
+:END:
+
+I think I can confidently say that:
+a) if a land has 3 brigdes,
+b) and we want to use all of them,
+c) startig outside,
+THEN the path will end inside!
+
+** Example 2
+Alright lets look at this:
+
+#+id: 9
+#+caption: H -> L -> C -> H -> C -> R -> L
+#+image: /images/blog/about-the-bridges/ex-02.png
+
+Looking at H we have something like this:
+
+#+id: 10
+#+caption: H -> ... -> H -> ...
+#+image: /images/blog/about-the-bridges/h-02.png
+
+Again, we notice a few things:
+1. H has 3 bridges
+2. all of H's bridges were used! yay!
+3. path started inside H and ended outside H
+
+*** Conjecture 2
+:PROPERTIES:
+:CUSTOM_ID: conjecture-2
+:END:
+
+a) if a land has 3 brigdes,
+b) and we want to use all of them,
+c) we have 2 options:
+   - if starting outside, [[#conjecture-1][THEN the path will end inside!]]
+   - if startig inside, [[fig:10][THEN the path will end outside]]
+
+*** Conjecture 2 - reworded
+:PROPERTIES:
+:CUSTOM_ID: conjecture-3
+:END:
+
+In other words:
+a) if a land has 3 bridges
+b) and we have a path that crosses all bridges once
+c) *then this land will have to be either at the start or at the begining of the path* (and we will also pass by it somewhere along the path)
+
+* We have something already
+Supose such path is possible for our city and we found it.
+
+1. In our [[fig:4][drawing]], we have 4 islands. 3 of them (R, L, and H) have 3 bridges.
+2. [[#conjecture-3][We saw]] that if a land has 3 brigdes, it has to be either at the start or at the end of the path
+3. This path will have 1 start land and 1 end land, naturally (it's a path, that's how they work usually... unless it's a cycle.......)
+
+We have to fit 3 lands in 2 spots? R, L, and H all have to be either start land or end land.
+
+*THERE ARE ONLY 2 SPOTS FOR OUR 3 LANDS TO FIT!!!!!!! THIS IS NOT POSSIBLE!!!!!!*
+
+AUNT LEA IS GOING TO BE SO MAD!!!
+
+* I can't find Aunt Lea
+I was eager to share my findings with her but it seems she is on her monthly pilgrimage. This will have to wait...
+
+A few questions still encacucate me, though:
+
+1. is this impossible for ALL possible land+bridge configurations? What if we had lands with 2 bridges, or 4? or 6? idunno
+2. if not, what do we need for a path like this to be possible?
+
+Stay tuned for more! haha bye friends
+
+# ** Example 3
+# Don't give up. We are getting somewhere. YOU HAVE TO TRUST ME.
+
+# Alright look at this:
+
+# #+id: 10
+# #+caption: C -> R -> C -> L -> H -> C -> H
+# #+image: /images/blog/about-the-bridges/ex-03.png
+
+# We failed again but now C is the one we managed to cross all bridges!
+
+# And C has 5 bridges instead of 3. This is scary.
+
+# What happened?
+
+# #+id: 11
+# #+caption: C -> R -> C -> L -> H -> C -> H
+# #+image: /images/blog/about-the-bridges/c-01.png
+
+# 1. started in C
+# 2. took 2 bridges out, 2 brigdes in, one last brigde out:
+#    - (1) out
+#    - (2) in
+#    - (3) out
+#    - (4) in
+#    - (5) out
+# 3. ended outside C
+
+# Huh...
+
+# When we had [[#conjecture-2][3 bridges]], it was very similar:
+# a) took 1 bridge out, 1 in, one last out
+# b) took 1 bridge in, 1 out, one last in
+
+# ** Example 4
+# Lets pretend we have another

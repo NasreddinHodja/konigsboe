@@ -31,10 +31,12 @@ export interface TocItem {
 
 export function extractToc(html: string): TocItem[] {
 	const items: TocItem[] = [];
-	const re = /<h([23])[^>]*\sid="([^"]+)"[^>]*>([\s\S]*?)<\/h[23]>/g;
+	const re = /<h([1-6])[^>]*\sid="([^"]+)"[^>]*>([\s\S]*?)<\/h[1-6]>/g;
 	let m: RegExpExecArray | null;
 	while ((m = re.exec(html)) !== null) {
-		items.push({ level: parseInt(m[1]), id: m[2], text: m[3].replace(/<[^>]*>/g, '') });
+		const level = parseInt(m[1]);
+		if (level > 3) continue; // only h1–h3
+		items.push({ level, id: m[2], text: m[3].replace(/<[^>]*>/g, '') });
 	}
 	return items;
 }

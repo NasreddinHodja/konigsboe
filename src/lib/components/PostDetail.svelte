@@ -3,6 +3,9 @@
 	import { formatDate, youtubeId, extractToc } from '$lib/utils';
 	import { ArrowLeft, ArrowRight, ChevronRight } from '@lucide/svelte';
 	import { onMount } from 'svelte';
+	import Image from '$lib/components/org/Image.svelte';
+	import Video from '$lib/components/org/Video.svelte';
+	import Equation from '$lib/components/org/Equation.svelte';
 
 	interface Props {
 		post: Post;
@@ -42,7 +45,7 @@
 		<span class="truncate text-fg">{post.metadata.title}</span>
 	</nav>
 
-	<header class="mb-12 pb-8 {post.html?.trim() ? 'border-b border-border' : ''}">
+	<header class="mb-12 pb-8 {post.segments.length > 0 ? 'border-b border-border' : ''}">
 		{#if post.metadata.cover}
 			<div class="-mx-6 mb-8 overflow-hidden">
 				{#if embedVideo}
@@ -97,7 +100,7 @@
 			<p class="mb-3 font-mono text-xs tracking-widest text-fg-muted uppercase">Contents</p>
 			<ul class="space-y-1.5">
 				{#each toc as item (item.id)}
-					<li style="padding-left:{(item.level - 2) * 1}rem">
+					<li style="padding-left:{(item.level - 1) * 0.75}rem">
 						<a href="#{item.id}" class="text-fg underline-offset-2 hover:underline">{item.text}</a>
 					</li>
 				{/each}
@@ -105,9 +108,19 @@
 		</nav>
 	{/if}
 
-	<article class="prose max-w-none prose-stone dark:prose-invert" data-pagefind-body>
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html post.html}
+	<article class="prose max-w-none prose-stone dark:prose-invert prose-h1:text-2xl prose-h1:leading-8 prose-h1:mt-10 prose-h1:mb-2 prose-h2:mt-8 prose-h2:mb-2 prose-h3:mt-6 prose-h3:mb-1 prose-li:my-0.5" data-pagefind-body>
+		{#each post.segments as seg}
+			{#if seg.type === 'html'}
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+				{@html seg.content}
+			{:else if seg.type === 'figure'}
+				<Image src={seg.src} caption={seg.caption} figNum={seg.figNum} id={seg.id} />
+			{:else if seg.type === 'video'}
+				<Video src={seg.src} caption={seg.caption} figNum={seg.figNum} id={seg.id} />
+			{:else if seg.type === 'equation'}
+				<Equation latex={seg.latex} caption={seg.caption} figNum={seg.figNum} id={seg.id} />
+			{/if}
+		{/each}
 	</article>
 
 	{#if prev || next}
@@ -159,5 +172,30 @@
 
 	:global(pre:hover .copy-btn) {
 		opacity: 1;
+	}
+
+	/* Attribute selectors can't be expressed as Tailwind prose modifiers */
+	:global(.prose ol[type='a']) {
+		list-style-type: lower-alpha;
+	}
+	:global(.prose ol[type='A']) {
+		list-style-type: upper-alpha;
+	}
+
+	:global(:target) {
+		animation: target-flash 1.4s ease-out;
+	}
+
+	@keyframes target-flash {
+		0% {
+			box-shadow:
+				0 0 0 8px rgba(255, 255, 255, 0.25),
+				inset 0 0 0 9999px rgba(255, 255, 255, 0.25);
+		}
+		100% {
+			box-shadow:
+				0 0 0 8px rgba(255, 255, 255, 0),
+				inset 0 0 0 9999px rgba(255, 255, 255, 0);
+		}
 	}
 </style>
