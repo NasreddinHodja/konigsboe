@@ -2,6 +2,7 @@
 #+DATE: 2026-03-25
 #+DESCRIPTION: A Königsclassic.
 #+TAGS: Graphs
+#+cover: /images/blog/about-the-bridges/cover.png
 
 * Motivation
 In my city there is this messy river that forks, creating a few islands that we tied together with bridges. If we didn't do that, the islands would float downstream. Right??

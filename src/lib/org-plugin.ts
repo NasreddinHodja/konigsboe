@@ -57,6 +57,26 @@ function exportBlock(html: string): object {
 	return { type: 'export-block', backend: 'html', value: html };
 }
 
+// ─── Unified plugin: use CUSTOM_ID as heading id ─────────────────────────────
+// rehypeSlug generates ids from heading text, but org :CUSTOM_ID: properties
+// are used in internal [[#id]] links. The CUSTOM_ID lives in a property-drawer
+// sibling of the headline inside the section. Set hProperties.id on the
+// headline so rehypeSlug (which skips headings that already have an id) leaves
+// it alone.
+function uniorgCustomId(): UnifiedPlugin {
+	return () => (tree: any) => {
+		visit(tree, 'section', (node: any) => {
+			const headline = node.children?.find((c: any) => c.type === 'headline');
+			if (!headline) return;
+			const drawer = node.children?.find((c: any) => c.type === 'property-drawer');
+			if (!drawer) return;
+			const prop = drawer.children?.find((c: any) => c.type === 'node-property' && c.key === 'CUSTOM_ID');
+			if (!prop?.value) return;
+			headline.data = { ...headline.data, hProperties: { ...headline.data?.hProperties, id: prop.value } };
+		});
+	};
+}
+
 // ─── Unified plugin: mark alphabetic ordered lists ───────────────────────────
 // uniorg2rehype renders a) b) c) lists as <ol> without type, so browsers show
 // 1, 2, 3. This sets data.hProperties.type on the plain-list node — uniorg2rehype
@@ -184,6 +204,7 @@ export function orgPlugin(): VitePlugin {
 				.use(extractKeywords)
 				.use(uniorgSegments(segMap, code))
 				.use(uniorgAlphaLists())
+				.use(uniorgCustomId())
 				.use(uniorg2rehype)
 				.use(rehypeFigLinks)
 				.use(rehypeKatex)
