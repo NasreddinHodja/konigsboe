@@ -2,7 +2,7 @@
 #+DATE: 2026-03-25
 #+DESCRIPTION: A Königsclassic.
 #+TAGS: Graphs
-#+cover: /images/blog/about-the-bridges/cover.png
+#+cover: /images/blog/about-the-bridges/cover-1.png
 
 * Motivation
 In my city there is this messy river that forks, creating a few islands that we tied together with bridges. If we didn't do that, the islands would float downstream. Right??
@@ -78,9 +78,9 @@ I can still draw my paths, though. Don't trust me? try it out!
 By the way, when I talk to Aunt Lea about this, I describe my paths like this:
 
 #+id: 6
-#+begin_equation
+\begin{equation*}
 R \to C \to R \to L \to C \to H \to C
-#+end_equation
+\end{equation*}
 
 If you are paying attention (FOCUS!!), you will see that this [[fig:6][path]] represents the one in the [[fig:5][video]].
 
@@ -181,7 +181,7 @@ b) and we have a path that crosses all bridges once
 c) *then this land will have to be either at the start or at the end of the path*
 
 * We have something already
-Supose such path is possible for our city and we found it.
+Suppose such path is possible for our city and we found it.
 
 1. In our [[fig:4][drawing]], we have 4 islands. 3 of them (R, L, and H) have 3 bridges.
 2. [[#conjecture-3][We saw]] that if a land has 3 brigdes, it has to be either at the start or at the end of the path

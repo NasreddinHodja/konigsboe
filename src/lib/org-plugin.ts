@@ -11,6 +11,26 @@ import { visit } from "unist-util-visit";
 import type { Plugin as VitePlugin } from "vite";
 import type { Plugin as UnifiedPlugin } from "unified";
 import type { Segment } from "./types";
+import { createRequire } from "module";
+const tex2svg: (source: string) => Promise<string> =
+	createRequire(import.meta.url)("node-tikzjax").default;
+
+// Rehype plugin: trim trailing whitespace from the last text node in <p>
+// uniorg includes trailing newlines in paragraph text nodes; without trimming
+// the newline renders as a visible space before prose's closing-quote ::after.
+function rehypeTrimParaTrailingSpace() {
+	return (tree: Parameters<typeof visit>[0]) => {
+		visit(tree, "element", (node: any) => {
+			if (node.tagName !== "p") return;
+			const children = node.children as any[];
+			if (!children?.length) return;
+			const last = children[children.length - 1];
+			if (last?.type === "text" && typeof last.value === "string") {
+				last.value = last.value.trimEnd();
+			}
+		});
+	};
+}
 
 // Rehype plugin: fix [[fig:N]] links
 // uniorg2rehype renders [[fig:1]] as <a href="fig:1">fig:1</a>.
@@ -92,34 +112,61 @@ function uniorgCustomId(): UnifiedPlugin {
 	};
 }
 
-// Unified plugin: mark alphabetic ordered lists
-// uniorg2rehype renders a) b) c) lists as <ol> without type, so browsers show
-// 1, 2, 3. This sets data.hProperties.type on the plain-list node — uniorg2rehype
-// reads hProperties and merges them onto the output element.
+// Unified plugin: handle [@N] list counter-set syntax
+// uniorg-parse already parses [@N] and stores it in list-item.counter (stripped
+// from content). We just need to propagate it as the <ol start> attribute.
+function uniorgListCounters(): UnifiedPlugin {
+	return () => (tree: any) => {
+		visit(tree, "plain-list", (node: any) => {
+			const firstItem = node.children?.find((c: any) => c.type === "list-item");
+			if (!firstItem?.counter) return;
+			const n = parseInt(firstItem.counter);
+			if (isNaN(n)) return;
+			node.data = {
+				...node.data,
+				hProperties: { ...node.data?.hProperties, start: n },
+			};
+		});
+	};
+}
+
+// Unified plugin: map all org ordered-list bullet styles to HTML
+// uniorg2rehype renders all ordered lists as plain <ol>, losing type and suffix.
+// Bullet styles: 1. 1) a. a) A. A)
+// HTML type attribute handles a/A/1; `)` suffix needs a `paren` class + CSS.
 function uniorgAlphaLists(): UnifiedPlugin {
 	return () => (tree: any) => {
 		visit(tree, "plain-list", (node: any) => {
 			if (node.listType !== "ordered") return;
 			const bullet = (node.children?.[0]?.bullet as string) ?? "";
-			if (/^[a-z]\)/.test(bullet)) {
+			let type: string | undefined;
+			let cls: string | undefined;
+			if (/^[a-z]\)/.test(bullet))      { type = "a"; cls = "list-lower-alpha-paren"; }
+			else if (/^[a-z]\./.test(bullet)) { type = "a"; }
+			else if (/^[A-Z]\)/.test(bullet)) { type = "A"; cls = "list-upper-alpha-paren"; }
+			else if (/^[A-Z]\./.test(bullet)) { type = "A"; }
+			else if (/^\d+\)/.test(bullet))   { cls = "list-decimal-paren"; }
+			if (type || cls) {
 				node.data = {
 					...node.data,
-					hProperties: { ...node.data?.hProperties, type: "a" },
-				};
-			} else if (/^[A-Z]\)/.test(bullet)) {
-				node.data = {
-					...node.data,
-					hProperties: { ...node.data?.hProperties, type: "A" },
+					hProperties: {
+						...node.data?.hProperties,
+						...(type && { type }),
+						...(cls && { class: cls }),
+					},
 				};
 			}
 		});
 	};
 }
 
+type TikzSource = { source: string; caption?: string; figNum?: number; id?: string };
+
 // Unified plugin
 function uniorgSegments(
 	segMap: Map<number, Segment>,
 	source: string,
+	tikzSourceMap: Map<number, TikzSource>,
 ): UnifiedPlugin {
 	let segCounter = 0;
 
@@ -136,6 +183,12 @@ function uniorgSegments(
 				CUSTOM_SIBLING_KEYS.has(node.key as string)
 			) {
 				pending[node.key as string] = node.value as string;
+				continue;
+			}
+
+			// #+HTML: raw html passthrough
+			if (node.type === "keyword" && node.key === "HTML") {
+				out.push(exportBlock(node.value as string));
 				continue;
 			}
 
@@ -161,16 +214,31 @@ function uniorgSegments(
 				continue;
 			}
 
-			// Equation: #+begin_equation
+			// Equation: \begin{equation}...\end{equation}
+			if (node.type === "latex-environment") {
+				const latex = (node.value as string).trim();
+				const rawId = pending.ID;
+				const figNum = rawId ? parseInt(rawId) : undefined;
+				const id = rawId ? `fig-${rawId}` : undefined;
+				const caption = extractCaption(
+					node.affiliated as Record<string, unknown>,
+				);
+
+				if (caption || rawId) {
+					const n = segCounter++;
+					segMap.set(n, { type: "equation", latex, caption, figNum, id });
+					out.push(exportBlock(`<!--SEG:${n}-->`));
+					pending = {};
+					continue;
+				}
+			}
+
+			// TikZ: #+begin_export tikz
 			if (
-				node.type === "special-block" && node.blockType === "equation"
+				node.type === "export-block" &&
+				(node.backend as string)?.toLowerCase() === "tikz"
 			) {
-				const latex = source
-					.slice(
-						node.contentsBegin as number,
-						node.contentsEnd as number,
-					)
-					.trim();
+				const tikzSource = (node.value as string).trim();
 				const rawId = pending.ID;
 				const figNum = rawId ? parseInt(rawId) : undefined;
 				const id = rawId ? `fig-${rawId}` : undefined;
@@ -179,7 +247,7 @@ function uniorgSegments(
 				);
 
 				const n = segCounter++;
-				segMap.set(n, { type: "equation", latex, caption, figNum, id });
+				tikzSourceMap.set(n, { source: tikzSource, caption, figNum, id });
 				out.push(exportBlock(`<!--SEG:${n}-->`));
 				pending = {};
 				continue;
@@ -249,13 +317,26 @@ function uniorgSegments(
 									(p.children as Array<
 										Record<string, unknown>
 									>) ?? [],
-								)
+								).trimEnd()
 							}</p>`
 						)
 						.join("");
 				const html =
 					`<blockquote>${innerHtml}<cite style="display:block;text-align:right">— ${author}</cite></blockquote>`;
 				out.push(exportBlock(html));
+				pending = {};
+				continue;
+			}
+
+			// Observation: #+begin_export observation
+			if (
+				node.type === "export-block" &&
+				(node.backend as string)?.toLowerCase() === "observation"
+			) {
+				const content = (node.value as string).trim();
+				const n = segCounter++;
+				segMap.set(n, { type: "observation", content });
+				out.push(exportBlock(`<!--SEG:${n}-->`));
 				pending = {};
 				continue;
 			}
@@ -291,15 +372,18 @@ export function orgPlugin(): VitePlugin {
 			if (!id.endsWith(".org")) return;
 
 			const segMap = new Map<number, Segment>();
+			const tikzSourceMap = new Map<number, TikzSource>();
 
 			const result = await unified()
 				.use(uniorgParse)
 				.use(extractKeywords)
-				.use(uniorgSegments(segMap, code))
+				.use(uniorgSegments(segMap, code, tikzSourceMap))
+				.use(uniorgListCounters())
 				.use(uniorgAlphaLists())
 				.use(uniorgCustomId())
 				.use(uniorg2rehype)
 				.use(rehypeFigLinks)
+				.use(rehypeTrimParaTrailingSpace)
 				.use(rehypeKatex)
 				.use(rehypeSlug)
 				.use(rehypeAutolinkHeadings, { behavior: "wrap" })
@@ -313,6 +397,13 @@ export function orgPlugin(): VitePlugin {
 
 			const html = String(result);
 			const metadata = result.data as Record<string, unknown>;
+
+			// Resolve TikZ sources to SVGs (sequential — node-tikzjax is not concurrent-safe)
+			for (const [n, data] of tikzSourceMap) {
+				const wrapped = `\\usetikzlibrary{calc}\n\\begin{document}\n${data.source}\n\\end{document}`;
+				const svg = await tex2svg(wrapped);
+				segMap.set(n, { type: "tikz", svg, caption: data.caption, figNum: data.figNum, id: data.id });
+			}
 
 			// Split on SEG markers to build segments array
 			const segMarkerRe = /<!--SEG:(\d+)-->/;

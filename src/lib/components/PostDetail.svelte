@@ -1,11 +1,14 @@
 <script lang="ts">
 	import type { Post } from '$lib/content';
 	import { formatDate, youtubeId, extractToc } from '$lib/utils';
-	import { ArrowLeft, ArrowRight, ChevronRight } from '@lucide/svelte';
+	import { ArrowLeft, ArrowRight, ChevronRight, X } from '@lucide/svelte';
 	import { onMount } from 'svelte';
+	import { pushState } from '$app/navigation';
 	import Image from '$lib/components/org/Image.svelte';
 	import Video from '$lib/components/org/Video.svelte';
 	import Equation from '$lib/components/org/Equation.svelte';
+	import Tikz from '$lib/components/org/Tikz.svelte';
+	import Observation from '$lib/components/org/Observation.svelte';
 
 	interface Props {
 		post: Post;
@@ -20,6 +23,51 @@
 	const sectionLabel = $derived(section.charAt(0).toUpperCase() + section.slice(1));
 	const toc = $derived(extractToc(post.html));
 
+	let peek = $state<{ html: string; id: string } | null>(null);
+
+	function closePeek() {
+		peek = null;
+	}
+
+	function getSectionHtml(el: Element): string {
+		if (!/^H[1-6]$/.test(el.tagName)) return el.outerHTML;
+		const level = parseInt(el.tagName[1]);
+		let html = el.outerHTML;
+		let next = el.nextElementSibling;
+		while (next) {
+			if (/^H[1-6]$/.test(next.tagName) && parseInt(next.tagName[1]) <= level) break;
+			html += next.outerHTML;
+			next = next.nextElementSibling;
+		}
+		return html;
+	}
+
+	function goToSection() {
+		if (!peek) return;
+		const id = peek.id;
+		const target = document.getElementById(id);
+		closePeek();
+		if (!target) return;
+		pushState(`#${id}`, {});
+		const PADDING = 80;
+		const rect = target.getBoundingClientRect();
+		if (rect.top >= PADDING && rect.bottom <= window.innerHeight - PADDING) {
+			flashElement(target);
+		} else {
+			const scrollAmount =
+				rect.top < PADDING ? rect.top - PADDING : rect.bottom - window.innerHeight + PADDING;
+			window.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+			window.addEventListener('scrollend', () => flashElement(target), { once: true });
+		}
+	}
+
+	function flashElement(el: Element) {
+		el.classList.remove('target-flash');
+		void (el as HTMLElement).offsetWidth;
+		el.classList.add('target-flash');
+		el.addEventListener('animationend', () => el.classList.remove('target-flash'), { once: true });
+	}
+
 	onMount(() => {
 		document.querySelectorAll('pre').forEach((pre) => {
 			const btn = document.createElement('button');
@@ -33,8 +81,43 @@
 			pre.style.position = 'relative';
 			pre.appendChild(btn);
 		});
+
+		document.addEventListener('click', (e) => {
+			const link = (e.target as Element).closest('a[href^="#"]');
+			if (!link) return;
+			const href = link.getAttribute('href')!;
+			const id = href.slice(1);
+			const target = document.getElementById(id);
+			if (!target) return;
+
+			e.preventDefault();
+
+			const PADDING = 80;
+			const rect = target.getBoundingClientRect();
+			const fullyInView = rect.top >= PADDING && rect.bottom <= window.innerHeight - PADDING;
+			const partiallyInView = rect.bottom > 0 && rect.top < window.innerHeight;
+
+			if (fullyInView) {
+				pushState(href, {});
+				flashElement(target);
+			} else if (partiallyInView) {
+				pushState(href, {});
+				const scrollAmount =
+					rect.top < PADDING ? rect.top - PADDING : rect.bottom - window.innerHeight + PADDING;
+				window.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+				window.addEventListener('scrollend', () => flashElement(target), { once: true });
+			} else {
+				peek = { html: getSectionHtml(target), id };
+			}
+		}, { capture: true });
 	});
 </script>
+
+<svelte:window
+	onkeydown={(e) => {
+		if (e.key === 'Escape') closePeek();
+	}}
+/>
 
 <div class="mx-auto max-w-3xl px-6 py-16">
 	<nav class="mb-8 flex items-center gap-1.5 font-mono text-xs text-fg-muted">
@@ -119,6 +202,10 @@
 				<Video src={seg.src} caption={seg.caption} figNum={seg.figNum} id={seg.id} />
 			{:else if seg.type === 'equation'}
 				<Equation latex={seg.latex} caption={seg.caption} figNum={seg.figNum} id={seg.id} />
+			{:else if seg.type === 'tikz'}
+				<Tikz svg={seg.svg} caption={seg.caption} figNum={seg.figNum} id={seg.id} />
+			{:else if seg.type === 'observation'}
+				<Observation content={seg.content} />
 			{/if}
 		{/each}
 	</article>
@@ -153,7 +240,47 @@
 	{/if}
 </div>
 
+{#if peek}
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<div role="presentation" class="fixed inset-0 z-40" onclick={closePeek}></div>
+	<div class="peek-panel fixed top-4 right-4 z-50 flex w-[min(28rem,calc(100vw-2rem))] flex-col border border-border bg-bg shadow-2xl" style="max-height: calc(100vh - 2rem)">
+		<div class="flex items-center justify-between border-b border-border px-4 py-2.5">
+			<span class="font-mono text-xs tracking-widest text-fg-muted uppercase">Peek</span>
+			<button onclick={closePeek} class="text-fg-muted transition-colors hover:text-fg">
+				<X class="h-3.5 w-3.5" />
+			</button>
+		</div>
+		<div class="prose prose-stone prose-sm dark:prose-invert max-w-none flex-1 overflow-y-auto px-5 py-4 [&_h1]:mt-4 [&_h2]:mt-4 [&_h3]:mt-3">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+			{@html peek.html}
+		</div>
+		<div class="border-t border-border px-5 py-3 flex justify-end">
+			<button
+				onclick={goToSection}
+				class="font-mono text-xs text-accent underline-offset-2 hover:underline"
+			>
+				Go to section
+			</button>
+		</div>
+	</div>
+{/if}
+
 <style>
+	.peek-panel {
+		animation: peek-in 0.15s ease-out;
+	}
+
+	@keyframes peek-in {
+		from {
+			opacity: 0;
+			transform: translateX(0.75rem);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
+
 	:global(.copy-btn) {
 		position: absolute;
 		top: 0.5rem;
@@ -182,7 +309,8 @@
 		list-style-type: upper-alpha;
 	}
 
-	:global(:target) {
+	:global(:target),
+	:global(.target-flash) {
 		animation: target-flash 1.4s ease-out;
 	}
 

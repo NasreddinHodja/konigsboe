@@ -1,0 +1,736 @@
+#+TITLE: About the Bridges 2
+#+DATE: 2026-03-30
+#+DESCRIPTION: We getting deep with this one.
+#+TAGS: Graphs
+#+cover: /images/blog/about-the-bridges/cover-2.png
+
+* Hello again
+Aunt Lea is still away. I hope she comes back. No one really talks to her except me. I wonder if that's why she is so sad all the time.
+
+Remember the bridges? Pay attention, friend. Are you sleeping well?
+
+#+id: 1
+#+caption: The seven bridges of Königsberg
+#+figure: /images/blog/about-the-bridges/konigsberg-001.jpg
+
+Aunt Lea said:
++ *Can we find a path that crossess all bridges exactly once?*
+
+What we found:
++ *No, we can't.*
+
+Why?
++ we have 3 lands with 3 bridges
++ if we had a path like that, [[/blog/about-the-bridges#conjecture-3][about-the-bridges/conjecture 2 says]] if a land has 3 bridges then it must be either at the start or at the end of the path
++ we would have a path that has 3(THREE!!) lands at its 2(TWO!!) end points. THIS IS NOT POSSIBLE!!! THREE > TWO!! some would say this is ABSURD............
+
+We still have questions that I think we can explore.
+
+* This is not about islands and bridges
+It kind of is though. But hear me out.
+
+** Enter Iblis
+:PROPERTIES:
+:CUSTOM_ID: 5-rooms-puzzle
+:END:
+My friend Iblis lives with with Aunt Lea in this funny house:
+
+#+id: 2
+#+caption: The five rooms puzzle
+#+figure: /images/blog/about-the-bridges/fiverooms.png
+
+It has five rooms (A, B, C, D, E) and the exterior (F). There is a doorway in every shared wall between any 2 rooms and between any room and the exterior. This is a very porous house.
+
+Now that Aunt Lea is away for some time, Iblis want to paint the doorways red because good fortune or something... He also wants to do this in a nice and efficient way:
++ *we want to find a path through the house that goes through each doorway, without repeating them*
+
+SOUNDS FAMILIAR? WELL...............
+
+I still have brain damage from Aunt Lea hitting me. This is what the house looks like to me:
+
+#+id: 3
+#+caption: Six connected things
+#+figure: /images/blog/about-the-bridges/fiverooms-simplified.png
+
+I was going to say that the rooms look like little islands and the doorways are the bridges. But...
+
+*We could also say that these are just things and connections between them.*
+
+For thinking about this problem, we don't actually need any more information on what these things are and what exactly are the connections.
+
+The great thing about saying "thing" is that we could be talking about ANYthing.
+
+When we started talking about this problem in terms of "island" and "bridges", we were referring specifically to Aunt Lea's problem. If we, instead, used words like "thing" and "connection"... We could be talking about ANYTHING that *behaves* like that.
+
+OK WE ARE GETTING DEEP HERE.
+
+Do you understand? We are gradually forsaking reality. Don't worry, this is nice haha.
+
+#+id: 4
+#+caption: Squad hanging with Plato and some forms
+#+figure: /images/blog/about-the-bridges/hanging-with-plato.jpg
+
+
+* But what the fuck are we talking about then
+Yeah yeah *"things"* and *"connections"*. But this feels too loose.
+
+Let's give them propper names. I think they deserve to be named. And maybe we should allow them to have pets? Or, like, a little family and stuff, so they don't get lonely. OooH that would be so sweet!!
+
+Alright let's give birth to some concepts! (I'm pregnant!)
+
+** The graph
+:PROPERTIES:
+:CUSTOM_ID: definition-1
+:END:
+
+A /graph/ is something that has 2 bags, \(V\) and \(E\). What's inside?
++ $V$ has /vertices/ (our "things")
++ $E$ has pairs of vertices, which we call /edges/ (our "connections")
+
+Whaaat?
+
+*** Example: The Konigsgraph
+
+#+id: 5
+#+caption: My city. Kind of
+#+image: /images/blog/about-the-bridges/simplified-2.png
+
+Actually, let me make this even MORE +souless+ abstract. Let's make our visual representation match the simplicity of [[#definition-1][our definition]]:
+
+#+id: 6
+#+caption: oh my god! this is so clean!
+#+begin_export tikz
+\begin{tikzpicture}[
+vertex/.style={circle, fill, inner sep=2.5pt},
+edge/.style={thick}
+]
+\node[vertex, label=left:$c$]  (c) at (-2.5, 0)    {};
+\node[vertex, label=above:$h$] (h) at (0, 2.5)  {};
+\node[vertex, label=below:$l$] (l) at (0, -2.5) {};
+\node[vertex, label=right:$r$] (r) at (2.5, 0)  {};
+
+\draw[edge, bend left=20]  (c) to (h);
+\draw[edge, bend right=20] (c) to (h);
+
+\draw[edge, bend left=20]  (c) to (l);
+\draw[edge, bend right=20] (c) to (l);
+
+\draw[edge] (c) to (r);
+\draw[edge] (h) to (r);
+\draw[edge] (c) to (r);
+\draw[edge] (l) to (r);
+\end{tikzpicture}
+#+end_export
+
+What do our little graph bags look like, then?
+
++ /V/ has h, c, r and l
++ /E/ consists of:
+  - h - c
+  - h - c
+  - h - r
+  - c - r
+  - l - c
+  - l - c
+  - l - r
+
+Ugh, this text looks so ugly. How about this:
+
+#+id: 7
+#+caption: Yep yep this matches the vibe
+\begin{align*}
+V &= \{ h, c, l, r \} \\
+E &= \{
+\{ h, c \},
+\{ h, c \},
+\{ h, r \},
+\{ c, r \}, \\
+&\quad\quad\{ l, c \},
+\{ l, c \},
+\{ l, r \}
+\}
+\end{align*}
+
+*As far as the problem cares, [[fig:7][this]] is what my city is!*
+
+
+*** Example: Iblis' house
+We take [[fig:2][this]] and we suck it dry:
+
+#+id: 7
+#+caption: Waaa... So pretty!
+#+begin_export tikz
+\begin{tikzpicture}[
+vertex/.style={circle, fill, inner sep=2.5pt},
+edge/.style={thick}
+]
+\node[vertex, label=above:$a$] (a) at (-1.5, 2.5)  {};
+\node[vertex, label=above:$b$] (b) at (1.5, 2.5)   {};
+\node[vertex, label=left:$c$]  (c) at (-2.5, 0)    {};
+\node[vertex, label=3:$d$] (d) at (0, 0)       {};
+\node[vertex, label=right:$e$] (e) at (2.5, 0)     {};
+\node[vertex, label=below:$f$] (f) at (0, -2.5)    {};
+
+\draw[edge] (a) to (b);
+\draw[edge] (a) to (c);
+\draw[edge] (a) to (d);
+\draw[edge] (b) to (d);
+\draw[edge] (b) to (e);
+\draw[edge] (c) to (d);
+\draw[edge] (d) to (e);
+\draw[edge] (d) to (f);
+
+\draw[edge, bend left=20]  (c) to (f);
+\draw[edge, bend right=20]  (c) to (f);
+
+\draw[edge, bend right=20] (e) to (f);
+\draw[edge, bend left=20] (e) to (f);
+
+\draw[edge, out=180, in=180, looseness=1.5] (a) to (f);
+\draw[edge, out=160, in=200, looseness=2] (a) to (f);
+
+\draw[edge, out=0, in=0, looseness=1.5] (b) to (f);
+\draw[edge, out=20, in=-20, looseness=2] (b) to (f);
+\end{tikzpicture}
+#+end_export
+
+Our graph is:
+
+#+id: 8
+#+caption: Just trust me, alright?
+\begin{align*}
+V &= \{ a, b, c, d, e, f \} \\
+E &= \{ \\
+&\quad\{ a, b \},
+\{ a, c \},
+\{ a, d \},
+\{ b, d \}, \\
+&\quad\{ b, e \},
+\{ c, d \},
+\{ d, e \},
+\{ d, f \}, \\
+&\quad\{ c, f \},
+\{ c, f \},
+\{ e, f \},
+\{ e, f \}, \\
+&\quad\{ a, f \},
+\{ a, f \},
+\{ b, f \},
+\{ b, f \} \\
+\}
+\end{align*}
+
+* Back to Königsberg
+Ohhh! now we got NAMES and CONCEPTS. Let's rewrite our conclusion from last time.
+
+** Lemma 1
+:PROPERTIES:
+:CUSTOM_ID: lemma-1
+:END:
+
+A) if a vertex $v$ is connected by 3 edges
+B) and we have a path that uses all 3 edges exactly once
+C) then $v$ is the vertex that starts this path, or the one that ends it. (not both!)
+
+*** Proof
+Alright we've done this before. We just have to use the new names...
+
+Let $v$ be a vertex with 3 edges, in a graph $G$.
+
+Suppose we have a path $P$ that uses these 3 edges exactly once.
+
+***** Crossing a single edge
+Let $u$ be a neighbor of $v$ (they are connected by one of these 3 edges).
+
+Using the edge $\{u, v\}$, there are 2 possible directions:
+
+#+id: 9
+#+caption: Forget the rest of the graph
+#+begin_export tikz
+\begin{tikzpicture}[scale=2, transform shape, >=stealth,
+vertex/.style={circle, fill, inner sep=2.5pt},
+edge/.style={line width=2pt},
+dotted edge/.style={thick, dotted, line cap=round},
+elabel/.style={midway, font=\scriptsize}
+]
+\node[vertex, label=above:$v$] (v) at (-1.5, 0)  {};
+\node[vertex, label=above:$u$] (u) at (1.5, 0)   {};
+\coordinate (nowhere) at (-3.5, 1.5);
+\coordinate (nowhere2) at (0.5, 1.5);
+\coordinate (nowhere3) at (4, 0);
+
+\draw[edge] (v) to (u);
+\draw[edge] (v) to ($(v)!0.45!(nowhere)$);
+\draw[dotted edge] ($(v)!0.45!(nowhere)$) to ($(v)!0.70!(nowhere)$);
+\draw[edge] (v) to ($(v)!0.45!(nowhere2)$);
+\draw[dotted edge] ($(v)!0.45!(nowhere2)$) to ($(v)!0.70!(nowhere2)$);
+\draw[edge] (u) to ($(v)!0.45!(nowhere3)$);
+\draw[dotted edge] ($(v)!0.45!(nowhere3)$) to ($(v)!0.70!(nowhere3)$);
+\end{tikzpicture}
+#+end_export
+
+1. we can go $u \to v$
+2. OR we can do $v \to u$
+
+#+author: You, probably
+#+begin_quote
+But, Nassu, this is sooo obvious!
+#+end_quote
+
+Yeah, slow down, friend. I'm trying to be meticulous here! haha
+
+***** Crossing all 3 edges
+What are the possible directions for each?
+
+We have 2 options:
+
+#+id: 10
+#+caption: ... -> v -> ... -> v
+#+begin_export tikz
+\begin{tikzpicture}[scale=2, transform shape, >=stealth,
+vertex/.style={circle, fill, inner sep=2.5pt},
+edge/.style={line width=2pt},
+dotted edge/.style={thick, dotted, line cap=round},
+elabel/.style={midway, font=\scriptsize}
+]
+\node[vertex, label=below:$v$] (v) at (-1.5, 0)  {};
+\coordinate (nowhere) at (-3.5, 1.5);
+\coordinate (nowhere2) at (-1.5, 2.5);
+\coordinate (nowhere3) at (0.5, 1.5);
+
+\draw[edge, <-] (v) to node[elabel, shift={(225:6pt)}] {$1$} ($(v)!0.45!(nowhere)$);
+\draw[dotted edge] ($(v)!0.45!(nowhere)$) to ($(v)!0.70!(nowhere)$);
+\draw[edge, ->] (v) to node[elabel, shift={(180:6pt)}] {$2$} ($(v)!0.45!(nowhere2)$);
+\draw[dotted edge] ($(v)!0.45!(nowhere2)$) to ($(v)!0.70!(nowhere2)$);
+\draw[edge, <-] (v) to node[elabel, shift={(315:6pt)}] {$3$} ($(v)!0.45!(nowhere3)$);
+\draw[dotted edge] ($(v)!0.45!(nowhere3)$) to ($(v)!0.70!(nowhere3)$);
+\end{tikzpicture}
+#+end_export
+A) [[fig:10][Path]] starts outside $v$:
+   1. edge $1$ will be used:
+
+      \[\cdots \xrightarrow{1} v\]
+   2. edge $2$ will be used, in sequence:
+
+      \[\cdots \xrightarrow{1} v \xrightarrow{2} \cdots\]
+   3. paths continues... finally, it crosses edge 3:
+
+      \[\cdots \xrightarrow{1} v \xrightarrow{2} \cdots \xrightarrow{3} v\]
+   4. we end up stuck in $v$!
+
+#+id: 11
+#+caption: v -> ... -> v -> ...
+#+begin_export tikz
+\begin{tikzpicture}[scale=2, transform shape, >=stealth,
+vertex/.style={circle, fill, inner sep=2.5pt},
+edge/.style={line width=2pt},
+dotted edge/.style={thick, dotted, line cap=round},
+elabel/.style={midway, font=\scriptsize}
+]
+\node[vertex, label=below:$v$] (v) at (-1.5, 0)  {};
+\coordinate (nowhere) at (-3.5, 1.5);
+\coordinate (nowhere2) at (-1.5, 2.5);
+\coordinate (nowhere3) at (0.5, 1.5);
+
+\draw[edge, ->] (v) to node[elabel, shift={(225:6pt)}] {$1$} ($(v)!0.45!(nowhere)$);
+\draw[dotted edge] ($(v)!0.45!(nowhere)$) to ($(v)!0.70!(nowhere)$);
+\draw[edge, <-] (v) to node[elabel, shift={(180:6pt)}] {$2$} ($(v)!0.45!(nowhere2)$);
+\draw[dotted edge] ($(v)!0.45!(nowhere2)$) to ($(v)!0.70!(nowhere2)$);
+\draw[edge, ->] (v) to node[elabel, shift={(315:6pt)}] {$3$} ($(v)!0.45!(nowhere3)$);
+\draw[dotted edge] ($(v)!0.45!(nowhere3)$) to ($(v)!0.70!(nowhere3)$);
+\end{tikzpicture}
+#+end_export
+B) [@2] [[fig:11][Path]] starts inside $v$:
+   1. edge $1$ will be used:
+
+      \[v \xrightarrow{1} \cdots\]
+   2. edge $2$ will be used, in sequence:
+
+      \[v \xrightarrow{1} \cdots \xrightarrow{2} v\]
+   3. paths continues... finally, it crosses edge 3:
+
+      \[v \xrightarrow{1} \cdots \xrightarrow{2} v \xrightarrow{3} \cdots\]
+   4. we end up outside $v$! (Somewhere else. We don't care. :D)
+
+
+Fuck! This is boring. You can finish this yourself. I don't care anymore.
+
+** Solution to the Konigsproblem
+a) Something something;
+b) 3 vertices that have 3 edges;
+c) [[#lemma-1][Lemma 1 says]] we got 2 spots for each;
+d) 3 vertices to fit 2 spots -> *impossible*;
+
+I'm sure you can write this out yourself. heheheh ;) I DON'T HAVE TIME FOR THIS OK
+
+Iblis says he won't stop pissing on my door until we help him paint his doorways. I don't think Iblis is dealing well with Aunt Lea's absence.
+
+* Iblis' house
+Alright. We had:
+
+#+id: 12
+#+caption: 5 rooms & exterior
+#+figure: /images/blog/about-the-bridges/fiverooms.png
+
+Turned into this:
+
+#+id: 13
+#+caption: Yuck
+\begin{align*}
+V &= \{ a, b, c, d, e, f \} \\
+E &= \{ \\
+&\quad\{ a, b \},
+\{ a, c \},
+\{ a, d \},
+\{ b, d \}, \\
+&\quad\{ b, e \},
+\{ c, d \},
+\{ d, e \},
+\{ d, f \}, \\
+&\quad\{ c, f \},
+\{ c, f \},
+\{ e, f \},
+\{ e, f \}, \\
+&\quad\{ a, f \},
+\{ a, f \},
+\{ b, f \},
+\{ b, f \} \\
+\}
+\end{align*}
+
+Which we draw like this:
+
+#+id: 14
+#+caption: A pretty visual representation
+#+begin_export tikz
+\begin{tikzpicture}[
+vertex/.style={circle, fill, inner sep=2.5pt},
+edge/.style={thick}
+]
+\node[vertex, label=above:$a$] (a) at (-1.5, 2.5)  {};
+\node[vertex, label=above:$b$] (b) at (1.5, 2.5)   {};
+\node[vertex, label=left:$c$]  (c) at (-2.5, 0)    {};
+\node[vertex, label=3:$d$] (d) at (0, 0)       {};
+\node[vertex, label=right:$e$] (e) at (2.5, 0)     {};
+\node[vertex, label=below:$f$] (f) at (0, -2.5)    {};
+
+\draw[edge] (a) to (b);
+\draw[edge] (a) to (c);
+\draw[edge] (a) to (d);
+\draw[edge] (b) to (d);
+\draw[edge] (b) to (e);
+\draw[edge] (c) to (d);
+\draw[edge] (d) to (e);
+\draw[edge] (d) to (f);
+
+\draw[edge, bend left=20]  (c) to (f);
+\draw[edge, bend right=20]  (c) to (f);
+
+\draw[edge, bend right=20] (e) to (f);
+\draw[edge, bend left=20] (e) to (f);
+
+\draw[edge, out=180, in=180, looseness=1.5] (a) to (f);
+\draw[edge, out=160, in=200, looseness=2] (a) to (f);
+
+\draw[edge, out=0, in=0, looseness=1.5] (b) to (f);
+\draw[edge, out=20, in=-20, looseness=2] (b) to (f);
+\end{tikzpicture}
+#+end_export
+
+The [[#5-rooms-puzzle][problem]] is *the same*:
+
++ *Find a path that uses all edges exactly once.*
+
+** Is 3 a cursed number?
+[[#lemma-1][Lemma 1]] says something about vertices with 3 edges. Can we be *less specific*?
+
+I WANT TO BE ABLE TO SAY SOMETHING ABOUT 4, 5, EVEN 6 (maybe? i think we can even go bigger!) EDGES.
+
+Let's press the *GENERALIZE* button!!
+
+** 5 edges
+[[fig:14][The graph]] for Iblis' house has a vertex $a$ that has 5 edges! There are others like this but lets just look at $a$.
+(It doesn't matter which one we look at, right?? We want to say something about ALL vertices that have 5 edges.)
+
+Now, again, let's pretend we have a path that uses all of the edges that connect $a$.
+
+Zoom me in, Scotty! or whatever
+
+#+id: 15
+#+caption: ZOOOOM
+#+begin_export tikz
+\begin{tikzpicture}[scale=2, transform shape, >=stealth,
+vertex/.style={circle, fill, inner sep=2.5pt},
+edge/.style={line width=2pt},
+dotted edge/.style={dotted, line cap=round},
+elabel/.style={midway, font=\scriptsize}
+]
+\node[vertex, label=120:$a$] (a) at (0, 0) {};
+\coordinate (e1) at (90:2);
+\coordinate (e2) at (200:2);
+\coordinate (e3) at (234:2);
+\coordinate (e4) at (306:2);
+\coordinate (e5) at (-20:2);
+
+\draw[edge] (a) to ($(a)!0.60!(e1)$);
+\draw[dotted edge] ($(a)!0.45!(e1)$) to ($(a)!0.70!(e1)$);
+\draw[edge] (a) to ($(a)!0.60!(e2)$);
+\draw[dotted edge] ($(a)!0.45!(e2)$) to ($(a)!0.70!(e2)$);
+\draw[edge] (a) to ($(a)!0.60!(e3)$);
+\draw[dotted edge] ($(a)!0.45!(e3)$) to ($(a)!0.70!(e3)$);
+\draw[edge] (a) to ($(a)!0.60!(e4)$);
+\draw[dotted edge] ($(a)!0.45!(e4)$) to ($(a)!0.70!(e4)$);
+\draw[edge] (a) to ($(a)!0.60!(e5)$);
+\draw[dotted edge] ($(a)!0.45!(e5)$) to ($(a)!0.70!(e5)$);
+\end{tikzpicture}
+#+end_export
+
+Notice how I've repositioned the edges? Again, it doens't matter where I put them. It's still vertex $a$ from our graph.
+
+What if the path starts outside $a$?
+
+#+id: 16
+#+caption: ... -> a -> ... -> a -> ... -> a
+#+begin_export tikz
+\begin{tikzpicture}[scale=2, transform shape, >=stealth,
+vertex/.style={circle, fill, inner sep=2.5pt},
+edge/.style={line width=2pt},
+dotted edge/.style={dotted, line cap=round},
+elabel/.style={midway, font=\scriptsize}
+]
+\node[vertex, label=120:$a$] (a) at (0, 0) {};
+\coordinate (e1) at (90:2);
+\coordinate (e2) at (200:2);
+\coordinate (e3) at (234:2);
+\coordinate (e4) at (306:2);
+\coordinate (e5) at (-20:2);
+
+\draw[edge, <-] (a) to node[elabel, shift={(0:6pt)}]   {$5$} ($(a)!0.60!(e1)$);
+\draw[dotted edge] ($(a)!0.45!(e1)$) to ($(a)!0.70!(e1)$);
+\draw[edge, <-] (a) to node[elabel, shift={(252:6pt)}] {$1$} ($(a)!0.60!(e2)$);
+\draw[dotted edge] ($(a)!0.45!(e2)$) to ($(a)!0.70!(e2)$);
+\draw[edge, ->] (a) to node[elabel, shift={(324:6pt)}] {$2$} ($(a)!0.60!(e3)$);
+\draw[dotted edge] ($(a)!0.45!(e3)$) to ($(a)!0.70!(e3)$);
+\draw[edge, <-] (a) to node[elabel, shift={(36:4pt)}]  {$3$} ($(a)!0.60!(e4)$);
+\draw[dotted edge] ($(a)!0.45!(e4)$) to ($(a)!0.70!(e4)$);
+\draw[edge, ->] (a) to node[elabel, shift={(108:6pt)}] {$4$} ($(a)!0.60!(e5)$);
+\draw[dotted edge] ($(a)!0.45!(e5)$) to ($(a)!0.70!(e5)$);
+\end{tikzpicture}
+#+end_export
+
+1. we come from outside and enter $a$, using edge $1$
+2. we will then use edge $2$ to exit $a$
+3. we come from outside and enter $a$, using edge $3$
+4. we will then use edge $4$ to exit $a$
+5. finally, we come back to $a$ using edge $5$ and finish the path.
+
+Step 1 and step 2 can be paired together. Same for 3 and 4 hehe. Like this:
+
+1. *use 2 edges*: we enter $a$ with edge $1$ then exit with edge $2$
+2. *use 2 edges*: we enter $a$ with edge $3$ then exit with edge $4$
+3. *use 1 edges*: end the path by taking edge $5$ to come back to $a$
+
+What if we add 2 more edges? (That's 7 in total!)
+
+1. *use 2 edges*: we enter $a$ then exit $a$
+2. *use 2 edges*: we enter $a$ then exit $a$
+3. *use 2 edges*: we enter $a$ then exit $a$
+3. *use 1 edges*: end the path by taking the last edge to come back to $a$
+
+Huh.... We have 2 "types" of steps here. All the steps before the last one are the same. We could say:
+
+1. *REPEAT $n$ TIMES until $1$ edge left*: use *2* edges to get in then out
+2. use *1* last edge to get in
+
+Ok. What if the path started inside $a$?
+
+#+id: 16
+#+caption: a -> ... -> a -> ... -> a -> ...
+#+begin_export tikz
+\begin{tikzpicture}[scale=2, transform shape, >=stealth,
+vertex/.style={circle, fill, inner sep=2.5pt},
+edge/.style={line width=2pt},
+dotted edge/.style={dotted, line cap=round},
+elabel/.style={midway, font=\scriptsize}
+]
+\node[vertex, label=120:$a$] (a) at (0, 0) {};
+\coordinate (e1) at (90:2);
+\coordinate (e2) at (200:2);
+\coordinate (e3) at (234:2);
+\coordinate (e4) at (306:2);
+\coordinate (e5) at (-20:2);
+
+\draw[edge, ->] (a) to node[elabel, shift={(0:6pt)}]   {$5$} ($(a)!0.60!(e1)$);
+\draw[dotted edge] ($(a)!0.45!(e1)$) to ($(a)!0.70!(e1)$);
+\draw[edge, ->] (a) to node[elabel, shift={(252:6pt)}] {$1$} ($(a)!0.60!(e2)$);
+\draw[dotted edge] ($(a)!0.45!(e2)$) to ($(a)!0.70!(e2)$);
+\draw[edge, <-] (a) to node[elabel, shift={(324:6pt)}] {$2$} ($(a)!0.60!(e3)$);
+\draw[dotted edge] ($(a)!0.45!(e3)$) to ($(a)!0.70!(e3)$);
+\draw[edge, ->] (a) to node[elabel, shift={(36:4pt)}]  {$3$} ($(a)!0.60!(e4)$);
+\draw[dotted edge] ($(a)!0.45!(e4)$) to ($(a)!0.70!(e4)$);
+\draw[edge, <-] (a) to node[elabel, shift={(108:6pt)}] {$4$} ($(a)!0.60!(e5)$);
+\draw[dotted edge] ($(a)!0.45!(e5)$) to ($(a)!0.70!(e5)$);
+\end{tikzpicture}
+#+end_export
+We would use the edges in the same way but in the reverse direction:
+
+1. *REPEAT $n$ TIMES until $1$ edge left*: use *2* edges to get out then in
+   - $n \times 2$ edges are used here
+2. use *1* last edge to get out
+   - $1$ edge is used here
+
+We are crossing off the edges in a process that looks something like this:
+
+#+id: 17
+#+caption: ... math?
+\begin{align*}
+  \underbrace{2 + \ldots + 2}_{n \times 2} \quad + 1
+\end{align*}
+
+So what is $n$? Umm...
+
+For 3, 5, 7 edges we have:
+
+#+id: 17
+#+caption: oh god
+\begin{align*}
+3 = n \times 2 + 1 \quad &\implies \quad n = 1 \\
+5 = n \times 2 + 1 \quad &\implies \quad n = 2 \\
+4 = n \times 2 + 1 \quad &\implies \quad n = 3 \\
+&\vdots
+\end{align*}
+
+Yeah, why stop at 3? *we could go on*! Starting from $n = 1$, to infinity!!!!
+
+What we found out here is that 3 is not special. Neither is 5, or 7. What IS special is this formula:
+
+\begin{gather*}
+2n + 1 \\
+\text{where }n\text{ starts at }1\text{ and goes up}
+\end{gather*}
+
++ All vertices that have a number of edges that can be written as that formula are bound to behave like [[fig:17][this]]!
+
+Let's tie this all together. We have a fancy formula!!!!
+
+*** Hold on. What is "2n + 1"?
+It's a big umbrella. If you start pluggin numbers ($n \geq 1$) in this formula. You will get:
+
+\begin{gather*}
+3, 5, 7, 9, 11, 13, 14, \ldots
+\end{gather*}
+
+Yep. That's all the odd numbers above 3.
+
+I other words...
+
+This formula:
+\begin{align*}
+2n + 1 \quad,\enspace n \geq 1
+\end{align*}
+
+Represents the same group of numbers that this statement represents:
+\begin{gather*}
+\text{all odd numbers bigger than 3}
+\end{gather*}
+
+OK HERE WE GO
+
+** Lemma 2
+:PROPERTIES:
+:CUSTOM_ID: lemma-2
+:END:
+A) Let $v$ be a vertex, in a graph $G$, such that $v$ is connected by $2n + 1, n \geq 1$ edges.
+
+B) Suppose we have a path that uses all $2n + 1$ edges.
+
+C) Then, the path will either start or end in $v$.
+
+For A) we could also say "$v$ has an odd (+3) number of edges".
+
+** Solution to Iblis' problem
+See how we could use [[#lemma-2][lemma 2]] to prove our conclusion regarding Aunt Leas problem?
+
+Let's use it to give Iblis some answers.
+
+Graph looks like this:
+
+#+id: 18
+#+caption: we are almost there. hold on!!
+#+begin_export tikz
+\begin{tikzpicture}[
+vertex/.style={circle, fill, inner sep=2.5pt},
+edge/.style={thick}
+]
+\node[vertex, label=above:$a$] (a) at (-1.5, 2.5)  {};
+\node[vertex, label=above:$b$] (b) at (1.5, 2.5)   {};
+\node[vertex, label=left:$c$]  (c) at (-2.5, 0)    {};
+\node[vertex, label=3:$d$] (d) at (0, 0)       {};
+\node[vertex, label=right:$e$] (e) at (2.5, 0)     {};
+\node[vertex, label=below:$f$] (f) at (0, -2.5)    {};
+
+\draw[edge] (a) to (b);
+\draw[edge] (a) to (c);
+\draw[edge] (a) to (d);
+\draw[edge] (b) to (d);
+\draw[edge] (b) to (e);
+\draw[edge] (c) to (d);
+\draw[edge] (d) to (e);
+\draw[edge] (d) to (f);
+
+\draw[edge, bend left=20]  (c) to (f);
+\draw[edge, bend right=20]  (c) to (f);
+
+\draw[edge, bend right=20] (e) to (f);
+\draw[edge, bend left=20] (e) to (f);
+
+\draw[edge, out=180, in=180, looseness=1.5] (a) to (f);
+\draw[edge, out=160, in=200, looseness=2] (a) to (f);
+
+\draw[edge, out=0, in=0, looseness=1.5] (b) to (f);
+\draw[edge, out=20, in=-20, looseness=2] (b) to (f);
+\end{tikzpicture}
+#+end_export
+
+How many vertices have odd (+3) number of edges? We have: $a, b, d,...$ OOOP! THAT'S ENOUGH!
+
+Again, *more than 2 vertices have to be either at start or end of the path*.
+
+This meansssss:
+
++ WE CAN'T FIND A PATH THAT CROSSES ALL EDGES (doorways) EXACTLY ONCE!! Get fucked, Iblis.
+
+Ok, we are done. I'm just going to take this answer and state it out properly. The GENERAL way ;)
+
+* Theorem 1
+:PROPERTIES:
+:CUSTOM_ID: theorem-1
+:END:
+If a graph has more than 2 vertices that have an odd (+3) number of edges, then it is impossible to have a path that crosses all the edges in the graph exactly once.
+
+** Proof
+No.
+
+YOU do it.
+
+You think you can just sit there and read and I'll do the work for you oh yeah Nassu is such a nice guy he'll spell it out for me i don't have to do anything I just have to sit here and watch with my brain off while NASSU LOSES HIS FUCKING MIND OVER DUMB SHIT THAT DOESNT EDVEN MAT
+
+* Fuck Iblis
+Oh my god, friend. My brain hurts so bad. I spent 5 days thinking about this and the final product is [[#theorem-1][ONE fucking sentence]].
+
+I went to tell him and he's not there. The house isn't there either. Where are my friends? :(
+
+FUCK IBLIS AND FUCK LEA TOO I HATE YOU ALL WHAT DID I DO TO DESERVE THIS
+
+AND I'M NOT DONE YET. WHAT ABOUT EVEN NUMBERS?
+
+AAAAAAARRRGGGG
+
+#+HTML: <br><br>
+
+ok...
+Did I loose you with this one?
+
+Well, keep up, dumbass.
+
+haha see ya, friend

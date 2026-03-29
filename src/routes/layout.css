@@ -228,6 +228,10 @@ pre.shiki {
 	}
 }
 
+ol.list-upper-alpha-paren > li::marker { content: counter(list-item, upper-alpha) ") "; }
+ol.list-lower-alpha-paren > li::marker { content: counter(list-item, lower-alpha) ") "; }
+ol.list-decimal-paren > li::marker    { content: counter(list-item) ") "; }
+
 @utility no-scrollbar {
 	-ms-overflow-style: none;
 	scrollbar-width: none;
